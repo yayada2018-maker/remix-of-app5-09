@@ -2131,9 +2131,9 @@ const VideoPlayer = ({
       {/* Center Controls - hide when settings menu is open */}
       {sourceType !== "embed" && sourceType !== "iframe" && !allSourcesMobileOnly && !allSourcesWebOnly && !isCurrentServerRestricted && (
         <>
-          {/* Exit Fullscreen Button - Top Left Corner (only in fullscreen) */}
+          {/* Exit Fullscreen Button - Top Left Corner (only in fullscreen on native mobile) */}
           {isFullscreen && showControls && !isLocked && !settingsMenuOpen && (
-            <div className="video-controls absolute top-0 left-0 z-[60] p-3 sm:p-4 pointer-events-auto">
+            <div className="video-controls absolute top-0 left-0 z-[60] p-2 sm:p-3 md:p-4 pointer-events-auto safe-area-top">
               <Button
                 variant="ghost"
                 size="icon"
@@ -2142,13 +2142,13 @@ const VideoPlayer = ({
                   e.stopPropagation();
                   toggleFullscreen();
                 }}
-                className="h-10 w-10 sm:h-11 sm:w-11 text-white bg-black/50 hover:bg-black/70 backdrop-blur-sm rounded-full border border-white/20 transition-all active:scale-95"
+                className="h-11 w-11 sm:h-12 sm:w-12 text-white bg-black/60 hover:bg-black/80 backdrop-blur-md rounded-full border-2 border-white/30 transition-all active:scale-90 shadow-lg"
                 style={{
                   WebkitTapHighlightColor: 'transparent',
                   touchAction: 'manipulation',
                 }}
               >
-                <ArrowLeft className="h-5 w-5 sm:h-6 sm:w-6" />
+                <ArrowLeft className="h-6 w-6 sm:h-7 sm:w-7" strokeWidth={2.5} />
               </Button>
             </div>
           )}
@@ -2272,6 +2272,7 @@ const VideoPlayer = ({
                   </Button>
 
                   {/* Fullscreen Toggle Button - Android native friendly (pointer events) */}
+                  {/* In fullscreen: this is the exit button (square icon in bottom right) */}
                   <Button 
                     variant="ghost" 
                     size="icon"
@@ -2283,15 +2284,17 @@ const VideoPlayer = ({
                       e.stopPropagation();
                       toggleFullscreen();
                     }}
-                    className={`h-8 w-8 sm:h-9 sm:w-9 text-white hover:bg-white/10 active:bg-white/20 touch-manipulation select-none ${
-                      isFullscreenTransitioning && !isAndroidNative ? 'opacity-50 cursor-wait' : ''
-                    }`}
+                    className={`h-9 w-9 sm:h-10 sm:w-10 text-white hover:bg-white/20 active:bg-white/30 touch-manipulation select-none rounded-md transition-all ${
+                      isFullscreen 
+                        ? 'bg-black/50 border border-white/30 hover:bg-black/70' 
+                        : 'hover:bg-white/10'
+                    } ${isFullscreenTransitioning && !isAndroidNative ? 'opacity-50 cursor-wait' : ''}`}
                     style={{
                       WebkitTapHighlightColor: 'transparent',
                       touchAction: 'manipulation',
                     }}
                   >
-                    {isFullscreen ? <Minimize className="h-5 w-5 sm:h-5 sm:w-5" /> : <Maximize className="h-5 w-5 sm:h-5 sm:w-5" />}
+                    {isFullscreen ? <Minimize className="h-5 w-5 sm:h-6 sm:w-6" /> : <Maximize className="h-5 w-5 sm:h-6 sm:w-6" />}
                   </Button>
                 </div>
               </div>
