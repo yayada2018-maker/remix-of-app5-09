@@ -40,6 +40,7 @@ import { VideoAdPlayer } from '@/components/ads/VideoAdPlayer';
 import { useSiteSettings } from '@/contexts/SiteSettingsContext';
 import AppLockOverlay from '@/components/AppLockOverlay';
 import { useAdMobRewarded } from '@/hooks/useAdMobRewarded';
+import { IframeFullscreenWrapper } from '@/components/IframeFullscreenWrapper';
 
 interface VideoPlayerProps {
   videoSources: VideoSource[];
@@ -1974,6 +1975,7 @@ const VideoPlayer = ({
 
       {/* Iframe Element - Only load when user has access and server is not restricted */}
       {/* Supports VK Video URLs with automatic API-based resolution for "Anyone with the link" videos */}
+      {/* On Android native, use IframeFullscreenWrapper for proper fullscreen exit functionality */}
       {(sourceType === "embed" || sourceType === "iframe") && !isLocked && !accessLoading && !allSourcesMobileOnly && !allSourcesWebOnly && !isCurrentServerRestricted && (
         <>
           {isResolvingVkUrl ? (
@@ -1983,7 +1985,15 @@ const VideoPlayer = ({
                 <span className="text-white/70 text-sm">Loading video...</span>
               </div>
             </div>
+          ) : isAndroidNative ? (
+            /* Android Native: Use IframeFullscreenWrapper for fullscreen exit capability */
+            <IframeFullscreenWrapper
+              embedUrl={resolvedVkEmbedUrl || convertVkVideoUrl(currentServer.url)}
+              title={title}
+              className="w-full h-full"
+            />
           ) : (
+            /* Web/iOS: Standard iframe */
             <iframe
               ref={iframeRef}
               src={resolvedVkEmbedUrl || convertVkVideoUrl(currentServer.url)}
