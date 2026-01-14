@@ -1809,7 +1809,7 @@ const VideoPlayer = ({
     <div className={isAndroidNative && !isFullscreen ? 'native-android-player-wrapper' : ''}>
     <div 
       ref={containerRef}
-      className="relative bg-black group w-full aspect-video video-player-container video-player-safe-area"
+      className={`relative bg-black group w-full ${isFullscreen ? '' : 'aspect-video'} video-player-container video-player-safe-area`}
       style={{
         maxHeight: isFullscreen ? '100vh' : undefined,
         maxWidth: isFullscreen ? '100vw' : undefined,
@@ -2132,17 +2132,17 @@ const VideoPlayer = ({
       {sourceType !== "embed" && sourceType !== "iframe" && !allSourcesMobileOnly && !allSourcesWebOnly && !isCurrentServerRestricted && (
         <>
           {/* Exit Fullscreen Button - Top Left Corner (only in fullscreen on native mobile) */}
-          {isFullscreen && showControls && !isLocked && !settingsMenuOpen && (
+          {isFullscreen && !isLocked && (
             <div className="video-controls absolute top-0 left-0 z-[60] p-2 sm:p-3 md:p-4 pointer-events-auto safe-area-top">
               <Button
                 variant="ghost"
                 size="icon"
-                onPointerUp={(e) => {
+                onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
                   toggleFullscreen();
                 }}
-                className="h-11 w-11 sm:h-12 sm:w-12 text-white bg-black/60 hover:bg-black/80 backdrop-blur-md rounded-full border-2 border-white/30 transition-all active:scale-90 shadow-lg"
+                className="h-11 w-11 sm:h-12 sm:w-12 bg-background/70 text-foreground hover:bg-background/85 backdrop-blur-md rounded-full border-2 border-border transition-all active:scale-90 shadow-lg"
                 style={{
                   WebkitTapHighlightColor: 'transparent',
                   touchAction: 'manipulation',
@@ -2180,7 +2180,7 @@ const VideoPlayer = ({
 
       {/* Bottom Controls */}
       {sourceType !== "embed" && sourceType !== "iframe" && !allSourcesMobileOnly && !allSourcesWebOnly && !isCurrentServerRestricted && (
-        <div className={`video-controls absolute inset-0 z-40 transition-opacity duration-300 pointer-events-none ${showControls ? 'opacity-100' : 'opacity-0'}`}>
+        <div className={`video-controls absolute inset-0 z-40 transition-opacity duration-300 pointer-events-none ${showControls || isFullscreen ? 'opacity-100' : 'opacity-0'}`}>
           <div className="absolute bottom-0 left-0 right-0 pointer-events-auto">
             {/* Progress Bar */}
             <div className="px-2 sm:px-4 pb-1.5 sm:pb-2">
@@ -2279,16 +2279,12 @@ const VideoPlayer = ({
                     // On Android native, the first tap can be consumed by the system UI when immersive mode isn't sticky.
                     // Don't disable the button there; just ignore rapid toggles inside the hook.
                     disabled={isFullscreenTransitioning && !isAndroidNative}
-                    onPointerUp={(e) => {
+                    onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
                       toggleFullscreen();
                     }}
-                    className={`h-9 w-9 sm:h-10 sm:w-10 text-white hover:bg-white/20 active:bg-white/30 touch-manipulation select-none rounded-md transition-all ${
-                      isFullscreen 
-                        ? 'bg-black/50 border border-white/30 hover:bg-black/70' 
-                        : 'hover:bg-white/10'
-                    } ${isFullscreenTransitioning && !isAndroidNative ? 'opacity-50 cursor-wait' : ''}`}
+                    className={`h-9 w-9 sm:h-10 sm:w-10 bg-background/60 text-foreground hover:bg-background/80 active:bg-background/90 touch-manipulation select-none rounded-md transition-all border border-border ${isFullscreenTransitioning && !isAndroidNative ? 'opacity-50 cursor-wait' : ''}`}
                     style={{
                       WebkitTapHighlightColor: 'transparent',
                       touchAction: 'manipulation',
