@@ -23,6 +23,7 @@ import { MembershipDialog } from '@/components/MembershipDialog';
 import { PullToRefresh } from './PullToRefresh';
 import { NotificationsDropdown } from '@/components/NotificationsDropdown';
 import { Capacitor } from '@capacitor/core';
+import { lockToPortrait } from '@/hooks/useScreenOrientation';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -42,6 +43,13 @@ const Layout = ({ children }: LayoutProps) => {
   const darkLogo = siteSettings?.logos?.dark_logo || logoDark;
   const brandTitle = siteSettings?.settings?.site_title || 'KHMERZOON';
   const logo = effectiveTheme === 'light' ? lightLogo : darkLogo;
+
+  // Lock native app to portrait mode on mount (fullscreen player will override to landscape)
+  useEffect(() => {
+    if (isNative) {
+      lockToPortrait();
+    }
+  }, [isNative]);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
